@@ -1,4 +1,7 @@
-package com.example.market.model;
+package com.example.market.consoleview;
+
+import com.example.market.model.Model;
+import com.example.market.model.Storage;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -74,12 +74,15 @@ public abstract class ConsoleView {
     }
 
     protected <T> T askInformation(Function<Scanner, T> infoExtractor, T fallback, String invitation) {
-        System.out.println(invitation);
+        System.out.print(invitation + " ");
         final Scanner scanner = new Scanner(System.in);
         try {
             return infoExtractor.apply(scanner);
         } catch (Exception e) {
             return fallback;
+        } finally {
+            System.out.print("\033[1A");
+            System.out.flush();
         }
     }
 

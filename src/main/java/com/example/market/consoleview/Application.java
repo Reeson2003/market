@@ -1,7 +1,6 @@
 package com.example.market.consoleview;
 
 import com.example.market.controller.TableControllerImpl;
-import com.example.market.model.InMemoryStorage;
 import com.example.market.model.Storage;
 
 import java.util.Map;
