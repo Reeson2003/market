@@ -1,4 +1,4 @@
-package com.example.market.consoleview;
+package com.example.market.consoleview.view;
 
 import java.util.Collection;
 import java.util.List;

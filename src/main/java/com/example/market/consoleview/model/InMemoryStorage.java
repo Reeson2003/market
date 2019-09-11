@@ -1,5 +1,6 @@
-package com.example.market.consoleview;
+package com.example.market.consoleview.model;
 
+import com.example.market.model.DataSupplier;
 import com.example.market.model.Model;
 import com.example.market.model.Storage;
 
@@ -8,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryStorage<M extends Model<M>>
-        implements Storage<M> {
+        implements Storage<M>, DataSupplier<M> {
 
     private final Map<Long, M> data = new HashMap<>();
 

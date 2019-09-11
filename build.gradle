@@ -17,5 +17,5 @@ dependencies {
 }
 
 application {
-    mainClassName = 'com.example.market.consoleview.Application'
+    mainClassName = 'com.example.market.Application'
 }

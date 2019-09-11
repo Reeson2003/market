@@ -1,4 +1,4 @@
-package com.example.market.consoleview;
+package com.example.market.consoleview.model;
 
 import com.example.market.model.BaseModel;
 
