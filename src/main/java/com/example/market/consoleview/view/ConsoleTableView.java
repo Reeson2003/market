@@ -3,9 +3,11 @@ package com.example.market.consoleview.view;
 import com.example.market.controller.TableController;
 import com.example.market.model.DataSupplier;
 import com.example.market.model.Model;
+import com.example.market.model.PropertyDefinition;
 import com.example.market.view.TableView;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConsoleTableView<M extends Model<M>>
         extends ConsoleView
@@ -86,7 +88,9 @@ public class ConsoleTableView<M extends Model<M>>
     private void showAsTable(Map<Long, M> models) {
         if (!models.isEmpty()) {
             final M next = models.values().iterator().next();
-            final List<String> propertyNames = next.getPropertyNames();
+            final List<String> propertyNames = next.getPropertyDefinitions().stream()
+                    .map(PropertyDefinition::getPropertyName)
+                    .collect(Collectors.toList());
             final Map<Long, List<String>> valuesList = new HashMap<>(models.size());
             for (Map.Entry<Long, M> entry : models.entrySet()) {
                 final ArrayList<String> values = new ArrayList<>();
@@ -95,7 +99,10 @@ public class ConsoleTableView<M extends Model<M>>
                 }
                 valuesList.put(entry.getKey(), values);
             }
-            printTable(propertyNames, valuesList);
+            final List<String> propertyDisplayedNames = next.getPropertyDefinitions().stream()
+                    .map(PropertyDefinition::getPropertyDisplayedName)
+                    .collect(Collectors.toList());
+            printTable(propertyDisplayedNames, valuesList);
         }
     }
 

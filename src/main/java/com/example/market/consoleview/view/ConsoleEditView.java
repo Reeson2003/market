@@ -1,6 +1,7 @@
 package com.example.market.consoleview.view;
 
 import com.example.market.model.Model;
+import com.example.market.model.PropertyDefinition;
 import com.example.market.view.EditView;
 
 import java.util.List;
@@ -13,20 +14,21 @@ public class ConsoleEditView<M extends Model<M>>
 
     @Override
     public M edit(M model) {
-        final List<String> propertyNames = model.getPropertyNames();
+        final List<PropertyDefinition> propertyDefinitions = model.getPropertyDefinitions();
         while (true) {
             clearScreen();
-            for (int i = 0; i < propertyNames.size(); i++) {
-                final String propertyName = propertyNames.get(i);
+            for (int i = 0; i < propertyDefinitions.size(); i++) {
+                final String propertyName = propertyDefinitions.get(i).getPropertyName();
+                final String propertyDisplayedName = propertyDefinitions.get(i).getPropertyDisplayedName();
                 final String propertyValue = model.getPropertyValue(propertyName);
-                System.out.println(toSize(String.valueOf(i), 5, ' ') + "| " + toSize(propertyName, SIZE, ' ') + "|" + toSize(propertyValue, SIZE, ' '));
+                System.out.println(toSize(String.valueOf(i), 5, ' ') + "| " + toSize(propertyDisplayedName, SIZE, ' ') + "|" + toSize(propertyValue, SIZE, ' '));
             }
             if (askForConfirm()) {
                 break;
             }
-            final int number = askForNumber(propertyNames.size());
+            final int number = askForNumber(propertyDefinitions.size());
             final String value = getValue();
-            model.setPropertyValue(propertyNames.get(number), value);
+            model.setPropertyValue(propertyDefinitions.get(number).getPropertyName(), value);
         }
         return model;
     }

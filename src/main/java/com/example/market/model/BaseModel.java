@@ -8,18 +8,27 @@ import java.util.stream.Collectors;
 public class BaseModel<M extends Model>
         implements Model<M> {
 
-    private List<String> propertyNames;
+    private List<PropertyDefinition> propertyDefinitions;
 
     public BaseModel() {
         final Field[] fields = getClass().getDeclaredFields();
-        propertyNames = Arrays.stream(fields)
-                .map(Field::getName)
+        propertyDefinitions = Arrays.stream(fields)
+                .map(field -> new PropertyDefinition(field.getName(), getDisplayedName(field)))
                 .collect(Collectors.toList());
     }
 
+    private String getDisplayedName(Field field) {
+        final Named annotation = field.getAnnotation(Named.class);
+        if (annotation == null) {
+            return field.getName();
+        } else {
+            return annotation.value();
+        }
+    }
+
     @Override
-    public List<String> getPropertyNames() {
-        return propertyNames;
+    public List<PropertyDefinition> getPropertyDefinitions() {
+        return propertyDefinitions;
     }
 
     @Override
