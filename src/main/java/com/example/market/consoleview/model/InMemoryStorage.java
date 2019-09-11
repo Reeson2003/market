@@ -1,8 +1,8 @@
 package com.example.market.consoleview.model;
 
-import com.example.market.model.DataSupplier;
+import com.example.market.data.DataSupplier;
+import com.example.market.data.Storage;
 import com.example.market.model.Model;
-import com.example.market.model.Storage;
 
 import java.util.Collections;
 import java.util.HashMap;

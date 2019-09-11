@@ -1,7 +1,7 @@
 package com.example.market.view;
 
 import com.example.market.controller.TableController;
-import com.example.market.model.DataSupplier;
+import com.example.market.data.DataSupplier;
 import com.example.market.model.Model;
 
 public interface TableView<M extends Model<M>> {

@@ -1,12 +1,12 @@
 package com.example.market.model;
 
-public class PropertyDefinition {
+public class PropDef {
 
     private final String propertyName;
 
     private final String propertyDisplayedName;
 
-    public PropertyDefinition(String propertyName, String propertyDisplayedName) {
+    public PropDef(String propertyName, String propertyDisplayedName) {
         this.propertyName = propertyName;
         this.propertyDisplayedName = propertyDisplayedName;
     }

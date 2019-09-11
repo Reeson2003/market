@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface Model<M> {
 
-    List<PropertyDefinition> getPropertyDefinitions();
+    List<PropDef> getPropDefs();
 
     String getPropertyValue(String propertyName);
 

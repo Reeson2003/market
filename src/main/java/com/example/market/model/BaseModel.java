@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 public class BaseModel<M extends Model>
         implements Model<M> {
 
-    private List<PropertyDefinition> propertyDefinitions;
+    private List<PropDef> propDefs;
 
     public BaseModel() {
         final Field[] fields = getClass().getDeclaredFields();
-        propertyDefinitions = Arrays.stream(fields)
-                .map(field -> new PropertyDefinition(field.getName(), getDisplayedName(field)))
+        propDefs = Arrays.stream(fields)
+                .map(field -> new PropDef(field.getName(), getDisplayedName(field)))
                 .collect(Collectors.toList());
     }
 
@@ -27,8 +27,8 @@ public class BaseModel<M extends Model>
     }
 
     @Override
-    public List<PropertyDefinition> getPropertyDefinitions() {
-        return propertyDefinitions;
+    public List<PropDef> getPropDefs() {
+        return propDefs;
     }
 
     @Override

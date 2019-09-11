@@ -1,9 +1,9 @@
 package com.example.market.consoleview.view;
 
 import com.example.market.controller.TableController;
-import com.example.market.model.DataSupplier;
+import com.example.market.data.DataSupplier;
 import com.example.market.model.Model;
-import com.example.market.model.PropertyDefinition;
+import com.example.market.model.PropDef;
 import com.example.market.view.TableView;
 
 import java.util.*;
@@ -88,8 +88,8 @@ public class ConsoleTableView<M extends Model<M>>
     private void showAsTable(Map<Long, M> models) {
         if (!models.isEmpty()) {
             final M next = models.values().iterator().next();
-            final List<String> propertyNames = next.getPropertyDefinitions().stream()
-                    .map(PropertyDefinition::getPropertyName)
+            final List<String> propertyNames = next.getPropDefs().stream()
+                    .map(PropDef::getPropertyName)
                     .collect(Collectors.toList());
             final Map<Long, List<String>> valuesList = new HashMap<>(models.size());
             for (Map.Entry<Long, M> entry : models.entrySet()) {
@@ -99,8 +99,8 @@ public class ConsoleTableView<M extends Model<M>>
                 }
                 valuesList.put(entry.getKey(), values);
             }
-            final List<String> propertyDisplayedNames = next.getPropertyDefinitions().stream()
-                    .map(PropertyDefinition::getPropertyDisplayedName)
+            final List<String> propertyDisplayedNames = next.getPropDefs().stream()
+                    .map(PropDef::getPropertyDisplayedName)
                     .collect(Collectors.toList());
             printTable(propertyDisplayedNames, valuesList);
         }

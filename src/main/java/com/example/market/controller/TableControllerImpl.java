@@ -1,7 +1,7 @@
 package com.example.market.controller;
 
+import com.example.market.data.Storage;
 import com.example.market.model.Model;
-import com.example.market.model.Storage;
 
 import java.util.Objects;
 

@@ -1,4 +1,6 @@
-package com.example.market.model;
+package com.example.market.data;
+
+import com.example.market.model.Model;
 
 public interface Storage<M extends Model<M>> {
 

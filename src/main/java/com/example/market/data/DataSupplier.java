@@ -1,4 +1,6 @@
-package com.example.market.model;
+package com.example.market.data;
+
+import com.example.market.model.Model;
 
 import java.util.Map;
 
