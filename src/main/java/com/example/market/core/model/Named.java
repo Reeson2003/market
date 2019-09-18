@@ -1,4 +1,4 @@
-package com.example.market.model;
+package com.example.market.core.model;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

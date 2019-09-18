@@ -1,4 +1,6 @@
-package com.example.market.model;
+package com.example.market.core.model;
+
+import java.util.Objects;
 
 public class PropDef {
 
@@ -7,7 +9,7 @@ public class PropDef {
     private final String propertyDisplayedName;
 
     public PropDef(String propertyName, String propertyDisplayedName) {
-        this.propertyName = propertyName;
+        this.propertyName = Objects.requireNonNull(propertyName);
         this.propertyDisplayedName = propertyDisplayedName;
     }
 
@@ -16,6 +18,10 @@ public class PropDef {
     }
 
     public String getPropertyDisplayedName() {
-        return propertyDisplayedName;
+        if (propertyDisplayedName != null) {
+            return propertyDisplayedName;
+        } else {
+            return propertyName;
+        }
     }
 }

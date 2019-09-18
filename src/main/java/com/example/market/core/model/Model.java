@@ -1,4 +1,4 @@
-package com.example.market.model;
+package com.example.market.core.model;
 
 import java.util.List;
 

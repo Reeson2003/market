@@ -1,15 +1,14 @@
 package com.example.market.consoleview.model;
 
-import com.example.market.data.DataSupplier;
-import com.example.market.data.Storage;
-import com.example.market.model.Model;
+import com.example.market.core.data.Repository;
+import com.example.market.core.model.Model;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryStorage<M extends Model<M>>
-        implements Storage<M>, DataSupplier<M> {
+        implements Repository<M> {
 
     private final Map<Long, M> data = new HashMap<>();
 

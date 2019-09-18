@@ -1,6 +1,6 @@
 package com.example.market.consoleview.model;
 
-import com.example.market.model.BaseModel;
+import com.example.market.core.model.BaseModel;
 
 public class Car
         extends BaseModel<Car> {

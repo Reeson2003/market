@@ -1,10 +1,10 @@
 package com.example.market.consoleview.view;
 
-import com.example.market.controller.TableController;
-import com.example.market.data.DataSupplier;
-import com.example.market.model.Model;
-import com.example.market.model.PropDef;
-import com.example.market.view.TableView;
+import com.example.market.core.controller.TableController;
+import com.example.market.core.data.DataSupplier;
+import com.example.market.core.model.Model;
+import com.example.market.core.model.PropDef;
+import com.example.market.core.view.TableView;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,6 +65,7 @@ public class ConsoleTableView<M extends Model<M>>
                 }
             }
         }
+        clearScreen();
     }
 
     private TableController<M> getController() {

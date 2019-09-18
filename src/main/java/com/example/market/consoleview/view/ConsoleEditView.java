@@ -1,8 +1,8 @@
 package com.example.market.consoleview.view;
 
-import com.example.market.model.Model;
-import com.example.market.model.PropDef;
-import com.example.market.view.EditView;
+import com.example.market.core.model.Model;
+import com.example.market.core.model.PropDef;
+import com.example.market.core.view.EditView;
 
 import java.util.List;
 
