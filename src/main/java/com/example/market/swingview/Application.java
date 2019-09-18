@@ -17,7 +17,6 @@ public class Application {
         final JFrame frame = new JFrame("My app");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         final SwingTableView<Product> tableView = new SwingTableView<>();
-        frame.setVisible(true);
         frame.add(tableView);
         frame.setSize(new Dimension(500, 500));
         frame.setLocation(200, 100);
@@ -26,7 +25,7 @@ public class Application {
         repository.add(new Product("Apple", "Fruit", 7));
         final Module<?> tableModule = new TableModule<Product>(repository, TableController.newInstance(Product::new), tableView);
         tableModule.run();
-        tableView.repaint();
+        frame.setVisible(true);
     }
 
 }

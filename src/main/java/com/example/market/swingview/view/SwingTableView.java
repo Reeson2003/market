@@ -7,7 +7,9 @@ import com.example.market.core.model.PropDef;
 import com.example.market.core.view.TableView;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,12 +37,9 @@ public class SwingTableView<M extends Model<M>>
 
     private AtomicBoolean close;
 
-    public SwingTableView() {
-    }
+    private DefaultTableModel tableModel;
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void show() {
+    public SwingTableView() {
         setLayout(new BorderLayout());
         JToolBar toolBar = new JToolBar();
         createButton = new JButton("Add");
@@ -54,6 +53,11 @@ public class SwingTableView<M extends Model<M>>
         add(contents, BorderLayout.CENTER);
         close = new AtomicBoolean(false);
         closeButton.addActionListener(e -> close.set(true));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void show() {
         propertyDisplayNames = controller.newOne()
                                          .getPropDefs()
                                          .stream()
@@ -64,10 +68,21 @@ public class SwingTableView<M extends Model<M>>
                                   .stream()
                                   .map(PropDef::getPropertyName)
                                   .collect(Collectors.toList());
-        final Map<Long, M> data = dataSupplier.getAll();
-        final JTable table = createTable(data);
+        tableModel = new DefaultTableModel(propertyDisplayNames.toArray(), 0);
+        final JTable table = new JTable(tableModel);
+        deleteButton.addActionListener(event -> {
+            final int[] selectedRows = table.getSelectedRows();
+            SwingUtilities.invokeLater(() -> Arrays.stream(selectedRows)
+                                                   .forEach(index -> tableModel.removeRow(index)));
+        });
+        createButton.addActionListener(event -> {
+            final M model = controller.newOne();
+            SwingUtilities.invokeLater(() -> addNewRow(model));
+        });
         contents.add(new JScrollPane(table));
         contents.setVisible(true);
+        final Map<Long, M> data = dataSupplier.getAll();
+        createTable(data);
     }
 
     @Override
@@ -80,17 +95,16 @@ public class SwingTableView<M extends Model<M>>
         this.dataSupplier = dataSupplier;
     }
 
-    private JTable createTable(Map<Long, M> data) {
-        final JTable table = new JTable(data.size(), propertyDisplayNames.size());
-        for (Map.Entry<Long, M> entry : data.entrySet()) {
-            final M element = entry.getValue();
-            for (int i = 0; i < propertyNames.size(); i++) {
-                final String value = element.getPropertyValue(propertyNames.get(i));
-                final int key = Math.toIntExact(entry.getKey());
-                table.setValueAt(value, key, i);
-            }
-        }
-        return table;
+    private void createTable(Map<Long, M> data) {
+        data.values()
+            .forEach(this::addNewRow);
+    }
+
+    private void addNewRow(M model) {
+        final Object[] values = propertyNames.stream()
+                                             .map(model::getPropertyValue)
+                                             .toArray();
+        tableModel.addRow(values);
     }
 
 }
