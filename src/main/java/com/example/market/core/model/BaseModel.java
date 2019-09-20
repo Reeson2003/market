@@ -8,13 +8,15 @@ import java.util.stream.Collectors;
 public class BaseModel<M extends Model>
         implements Model<M> {
 
+    private long id;
+
     private List<PropDef> propDefs;
 
     public BaseModel() {
         final Field[] fields = getClass().getDeclaredFields();
         propDefs = Arrays.stream(fields)
-                .map(field -> new PropDef(field.getName(), getDisplayedName(field)))
-                .collect(Collectors.toList());
+                         .map(field -> new PropDef(field.getName(), getDisplayedName(field)))
+                         .collect(Collectors.toList());
     }
 
     private String getDisplayedName(Field field) {
@@ -24,6 +26,16 @@ public class BaseModel<M extends Model>
         } else {
             return annotation.value();
         }
+    }
+
+    @Override
+    public long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
@@ -83,4 +95,5 @@ public class BaseModel<M extends Model>
             }
         }
     }
+
 }

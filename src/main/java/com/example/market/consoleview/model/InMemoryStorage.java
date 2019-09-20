@@ -3,25 +3,29 @@ package com.example.market.consoleview.model;
 import com.example.market.core.data.Repository;
 import com.example.market.core.model.Model;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryStorage<M extends Model<M>>
         implements Repository<M> {
 
-    private final Map<Long, M> data = new HashMap<>();
+    protected final Map<Long, M> data = new ConcurrentHashMap<>();
 
-    private long idGenerator = 0L;
+    private AtomicLong idGenerator = new AtomicLong(0L);
 
     @Override
-    public Map<Long, M> getAll() {
-        return Collections.unmodifiableMap(data);
+    public Collection<M> getAll() {
+        return Collections.unmodifiableCollection(data.values());
     }
 
     @Override
     public void add(M model) {
-        data.put(generateId(), model);
+        final long id = generateId();
+        model.setId(id);
+        data.put(id, model);
     }
 
     @Override
@@ -30,11 +34,12 @@ public class InMemoryStorage<M extends Model<M>>
     }
 
     @Override
-    public void update(long index, M model) {
-        data.put(index, model);
+    public void update(M model) {
+        data.put(model.getId(), model);
     }
 
     private long generateId() {
-        return idGenerator++;
+        return idGenerator.incrementAndGet();
     }
+
 }

@@ -13,7 +13,9 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 
 application {

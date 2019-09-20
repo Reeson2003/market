@@ -9,9 +9,9 @@ public interface TableController<M extends Model<M>> {
 
     void create(M model);
 
-    void delete(long index);
+    void delete(long id);
 
-    void update(long index, M model);
+    void update(M model);
 
     M newOne();
 

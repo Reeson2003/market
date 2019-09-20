@@ -13,7 +13,6 @@ public class ConsoleTableView<M extends Model<M>>
         extends ConsoleView
         implements TableView<M> {
 
-
     public static final String CREATE = "Create";
 
     public static final String UPDATE = "Update";
@@ -33,7 +32,7 @@ public class ConsoleTableView<M extends Model<M>>
         boolean finish = false;
         while (!finish) {
             clearScreen();
-            final Map<Long, M> models = getDataSupplier().getAll();
+            final Collection<M> models = getDataSupplier().getAll();
             showAsTable(models);
             String action;
             if (!models.isEmpty()) {
@@ -42,27 +41,27 @@ public class ConsoleTableView<M extends Model<M>>
                 action = askForAction(List.of(CREATE, FINISH));
             }
             switch (action) {
-                case CREATE: {
-                    final M newModel = editView.edit(getController().newOne());
-                    getController().create(newModel);
-                    break;
-                }
-                case UPDATE: {
-                    final long number = askForNumber(models.keySet());
-                    final M model = models.get(number);
-                    final M edited = editView.edit(model);
-                    getController().update(number, edited);
-                    break;
-                }
-                case DELETE: {
-                    final long number = askForNumber(models.keySet());
-                    getController().delete(number);
-                    break;
-                }
-                case FINISH: {
-                    finish = true;
-                    break;
-                }
+            case CREATE: {
+                final M newModel = editView.edit(getController().newOne());
+                getController().create(newModel);
+                break;
+            }
+            case UPDATE: {
+                final long number = askForNumber(models.stream().map(Model::getId).collect(Collectors.toList()));
+                final M model = models.stream().filter(m -> m.getId() == number).findAny().get();
+                final M edited = editView.edit(model);
+                getController().update(edited);
+                break;
+            }
+            case DELETE: {
+                final long number = askForNumber(models.stream().map(Model::getId).collect(Collectors.toList()));
+                getController().delete(number);
+                break;
+            }
+            case FINISH: {
+                finish = true;
+                break;
+            }
             }
         }
         clearScreen();
@@ -86,23 +85,23 @@ public class ConsoleTableView<M extends Model<M>>
         this.dataSupplier = dataSupplier;
     }
 
-    private void showAsTable(Map<Long, M> models) {
+    private void showAsTable(Collection<M> models) {
         if (!models.isEmpty()) {
-            final M next = models.values().iterator().next();
+            final M next = models.iterator().next();
             final List<String> propertyNames = next.getPropDefs().stream()
-                    .map(PropDef::getPropertyName)
-                    .collect(Collectors.toList());
+                                                   .map(PropDef::getPropertyName)
+                                                   .collect(Collectors.toList());
             final Map<Long, List<String>> valuesList = new HashMap<>(models.size());
-            for (Map.Entry<Long, M> entry : models.entrySet()) {
+            for (M model : models) {
                 final ArrayList<String> values = new ArrayList<>();
                 for (String propertyName : propertyNames) {
-                    values.add(entry.getValue().getPropertyValue(propertyName));
+                    values.add(model.getPropertyValue(propertyName));
                 }
-                valuesList.put(entry.getKey(), values);
+                valuesList.put(model.getId(), values);
             }
             final List<String> propertyDisplayedNames = next.getPropDefs().stream()
-                    .map(PropDef::getPropertyDisplayedName)
-                    .collect(Collectors.toList());
+                                                            .map(PropDef::getPropertyDisplayedName)
+                                                            .collect(Collectors.toList());
             printTable(propertyDisplayedNames, valuesList);
         }
     }

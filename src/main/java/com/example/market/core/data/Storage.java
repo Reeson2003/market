@@ -8,5 +8,6 @@ public interface Storage<M extends Model<M>> {
 
     void delete(long index);
 
-    void update(long index, M model);
+    void update(M model);
+
 }

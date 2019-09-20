@@ -21,8 +21,8 @@ public abstract class BaseTableController<M extends Model<M>>
     }
 
     @Override
-    public void update(long index, M model) {
-        getStorage().update(index, model);
+    public void update(M model) {
+        getStorage().update(model);
     }
 
     protected Storage<M> getStorage() {

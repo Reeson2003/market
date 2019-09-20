@@ -5,21 +5,22 @@ import com.example.market.core.data.DataSupplier;
 import com.example.market.core.model.Model;
 import com.example.market.core.model.PropDef;
 import com.example.market.core.view.TableView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class SwingTableView<M extends Model<M>>
         extends JPanel
         implements TableView<M> {
 
-    private List<String> propertyDisplayNames;
+    private static final Logger LOG = LoggerFactory.getLogger(SwingTableView.class);
 
     private List<String> propertyNames;
 
@@ -27,42 +28,27 @@ public class SwingTableView<M extends Model<M>>
 
     private DataSupplier<M> dataSupplier;
 
-    private JButton createButton;
-
-    private JButton deleteButton;
-
-    private JButton closeButton;
-
-    private Box contents;
-
-    private AtomicBoolean close;
-
     private DefaultTableModel tableModel;
-
-    public SwingTableView() {
-        setLayout(new BorderLayout());
-        JToolBar toolBar = new JToolBar();
-        createButton = new JButton("Add");
-        deleteButton = new JButton("Delete");
-        closeButton = new JButton("close");
-        toolBar.add(createButton);
-        toolBar.add(deleteButton);
-        toolBar.add(closeButton);
-        contents = new Box(BoxLayout.Y_AXIS);
-        add(toolBar, BorderLayout.NORTH);
-        add(contents, BorderLayout.CENTER);
-        close = new AtomicBoolean(false);
-        closeButton.addActionListener(e -> close.set(true));
-    }
 
     @SuppressWarnings("deprecation")
     @Override
     public void show() {
-        propertyDisplayNames = controller.newOne()
-                                         .getPropDefs()
-                                         .stream()
-                                         .map(PropDef::getPropertyDisplayedName)
-                                         .collect(Collectors.toList());
+        setLayout(new BorderLayout());
+        JToolBar toolBar = new JToolBar();
+        JButton addButton = new JButton("Add");
+        JButton deleteButton = new JButton("Delete");
+        JButton saveButton = new JButton("Save");
+        toolBar.add(addButton);
+        toolBar.add(deleteButton);
+        toolBar.add(saveButton);
+        Box contents = new Box(BoxLayout.Y_AXIS);
+        add(toolBar, BorderLayout.NORTH);
+        add(contents, BorderLayout.CENTER);
+        List<String> propertyDisplayNames = controller.newOne()
+                                                      .getPropDefs()
+                                                      .stream()
+                                                      .map(PropDef::getPropertyDisplayedName)
+                                                      .collect(Collectors.toList());
         propertyNames = controller.newOne()
                                   .getPropDefs()
                                   .stream()
@@ -71,18 +57,21 @@ public class SwingTableView<M extends Model<M>>
         tableModel = new DefaultTableModel(propertyDisplayNames.toArray(), 0);
         final JTable table = new JTable(tableModel);
         deleteButton.addActionListener(event -> {
-            final int[] selectedRows = table.getSelectedRows();
-            SwingUtilities.invokeLater(() -> Arrays.stream(selectedRows)
-                                                   .forEach(index -> tableModel.removeRow(index)));
+            final int[] rows = table.getSelectedRows();
+            LOG.debug("Selected rows: {}", Arrays.toString(rows));
+            for (int i = 0; i < rows.length; i++) {
+                tableModel.removeRow(rows[i] - i);
+            }
         });
-        createButton.addActionListener(event -> {
+        addButton.addActionListener(event -> {
+            LOG.debug("Add entry event received");
             final M model = controller.newOne();
             SwingUtilities.invokeLater(() -> addNewRow(model));
         });
         contents.add(new JScrollPane(table));
         contents.setVisible(true);
-        final Map<Long, M> data = dataSupplier.getAll();
-        createTable(data);
+        final Collection<M> data = dataSupplier.getAll();
+        fillTable(data);
     }
 
     @Override
@@ -95,9 +84,8 @@ public class SwingTableView<M extends Model<M>>
         this.dataSupplier = dataSupplier;
     }
 
-    private void createTable(Map<Long, M> data) {
-        data.values()
-            .forEach(this::addNewRow);
+    private void fillTable(Collection<M> data) {
+        data.forEach(this::addNewRow);
     }
 
     private void addNewRow(M model) {
