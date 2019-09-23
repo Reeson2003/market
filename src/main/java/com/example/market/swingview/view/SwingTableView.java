@@ -30,46 +30,39 @@ public class SwingTableView<M extends Model<M>>
 
     private DefaultTableModel tableModel;
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void show() {
+    public SwingTableView(List<PropDef> props) {
+        propertyNames = props.stream()
+                             .map(PropDef::getPropertyName)
+                             .collect(Collectors.toList());
         setLayout(new BorderLayout());
-        JToolBar toolBar = new JToolBar();
-        JButton addButton = new JButton("Add");
-        JButton deleteButton = new JButton("Delete");
-        JButton saveButton = new JButton("Save");
-        toolBar.add(addButton);
-        toolBar.add(deleteButton);
-        toolBar.add(saveButton);
-        Box contents = new Box(BoxLayout.Y_AXIS);
+        TableToolbar toolBar = new TableToolbar();
         add(toolBar, BorderLayout.NORTH);
+        Box contents = new Box(BoxLayout.Y_AXIS);
         add(contents, BorderLayout.CENTER);
-        List<String> propertyDisplayNames = controller.newOne()
-                                                      .getPropDefs()
-                                                      .stream()
-                                                      .map(PropDef::getPropertyDisplayedName)
-                                                      .collect(Collectors.toList());
-        propertyNames = controller.newOne()
-                                  .getPropDefs()
-                                  .stream()
-                                  .map(PropDef::getPropertyName)
-                                  .collect(Collectors.toList());
-        tableModel = new DefaultTableModel(propertyDisplayNames.toArray(), 0);
+        tableModel = new DefaultTableModel(props.stream()
+                                                .map(PropDef::getPropertyDisplayedName)
+                                                .toArray(), 0);
         final JTable table = new JTable(tableModel);
-        deleteButton.addActionListener(event -> {
+        toolBar.onDelete(() -> {
             final int[] rows = table.getSelectedRows();
             LOG.debug("Selected rows: {}", Arrays.toString(rows));
             for (int i = 0; i < rows.length; i++) {
                 tableModel.removeRow(rows[i] - i);
             }
-        });
-        addButton.addActionListener(event -> {
-            LOG.debug("Add entry event received");
-            final M model = controller.newOne();
-            SwingUtilities.invokeLater(() -> addNewRow(model));
-        });
+        })
+               .onAdd(() -> {
+                   LOG.debug("Add entry event received");
+                   final M model = controller.newOne();
+                   SwingUtilities.invokeLater(() -> addNewRow(model));
+               })
+               .onSave(() -> contents.setVisible(false))
+               .onRefresh(() -> contents.setVisible(true));
         contents.add(new JScrollPane(table));
-        contents.setVisible(true);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void show() {
         final Collection<M> data = dataSupplier.getAll();
         fillTable(data);
     }
