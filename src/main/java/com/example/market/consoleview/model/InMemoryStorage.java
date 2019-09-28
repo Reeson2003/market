@@ -22,20 +22,22 @@ public class InMemoryStorage<M extends Model<M>>
     }
 
     @Override
-    public void add(M model) {
-        final long id = generateId();
-        model.setId(id);
-        data.put(id, model);
+    public void save(M model) {
+        if (model.getId() == 0) {
+            final long id = generateId();
+            model.setId(id);
+        }
+        data.put(model.getId(), model);
+    }
+
+    @Override
+    public M find(long index) {
+        return data.get(index);
     }
 
     @Override
     public void delete(long index) {
         data.remove(index);
-    }
-
-    @Override
-    public void update(M model) {
-        data.put(model.getId(), model);
     }
 
     private long generateId() {

@@ -7,11 +7,11 @@ import java.util.function.Supplier;
 
 public interface TableController<M extends Model<M>> {
 
-    void create(M model);
-
     void delete(long id);
 
-    void update(M model);
+    void save(M model);
+
+    M find(long id);
 
     M newOne();
 

@@ -11,18 +11,18 @@ public abstract class BaseTableController<M extends Model<M>>
     private Storage<M> storage;
 
     @Override
-    public void create(M model) {
-        getStorage().add(model);
-    }
-
-    @Override
     public void delete(long index) {
         getStorage().delete(index);
     }
 
     @Override
-    public void update(M model) {
-        getStorage().update(model);
+    public void save(M model) {
+        getStorage().save(model);
+    }
+
+    @Override
+    public M find(long id) {
+        return getStorage().find(id);
     }
 
     protected Storage<M> getStorage() {

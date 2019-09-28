@@ -43,14 +43,14 @@ public class ConsoleTableView<M extends Model<M>>
             switch (action) {
             case CREATE: {
                 final M newModel = editView.edit(getController().newOne());
-                getController().create(newModel);
+                getController().save(newModel);
                 break;
             }
             case UPDATE: {
                 final long number = askForNumber(models.stream().map(Model::getId).collect(Collectors.toList()));
                 final M model = models.stream().filter(m -> m.getId() == number).findAny().get();
                 final M edited = editView.edit(model);
-                getController().update(edited);
+                getController().save(edited);
                 break;
             }
             case DELETE: {
