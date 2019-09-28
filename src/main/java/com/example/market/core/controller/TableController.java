@@ -26,4 +26,8 @@ public interface TableController<M extends Model<M>> {
         };
     }
 
+    static <M extends Model<M>> TableController<M> newInstance(Class<M> modelClass) {
+        return new ClassTableController<>(modelClass);
+    }
+
 }

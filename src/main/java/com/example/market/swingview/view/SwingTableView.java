@@ -11,8 +11,9 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,10 +31,12 @@ public class SwingTableView<M extends Model<M>>
 
     private DefaultTableModel tableModel;
 
-    private final JTable table;
-    private Map<Integer, M> displayedItems = new HashMap<>();
+    private JTable table;
 
-    public SwingTableView(List<PropDef> props) {
+    @SuppressWarnings("deprecation")
+    @Override
+    public void show() {
+        List<PropDef> props = controller.newOne().getPropDefs();
         propertyNames = props.stream()
                 .map(PropDef::getPropertyName)
                 .collect(Collectors.toList());
@@ -68,17 +71,15 @@ public class SwingTableView<M extends Model<M>>
                 })
                 .onSave(() -> {
                     save();
-                    show();
+                    fillTable();
                 })
-                .onRefresh(this::show);
+                .onRefresh(this::fillTable);
         contents.add(new JScrollPane(table));
+        fillTable();
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void show() {
-        final Collection<M> data = dataSupplier.getAll();
-        fillTable(data);
+    private void fillTable() {
+        fillTable(dataSupplier.getAll());
     }
 
     @Override
@@ -92,7 +93,6 @@ public class SwingTableView<M extends Model<M>>
     }
 
     private void save() {
-        LOG.debug("Saving new data");
         int rows = table.getModel().getRowCount();
         for (int i = 0; i < rows; i++) {
             long id = (long) tableModel.getValueAt(i, 0);
@@ -103,12 +103,14 @@ public class SwingTableView<M extends Model<M>>
                 String valueAt = (String) tableModel.getValueAt(i, j + 1);
                 model.setPropertyValue(propertyName, valueAt);
             }
+            LOG.debug("Saving data {}", model.toString());
             controller.save(model);
         }
     }
 
     private void fillTable(Collection<M> data) {
-        tableModel.setRowCount(0);
+        tableModel.getDataVector().removeAllElements();
+        tableModel.fireTableDataChanged();
         data.forEach(this::addNewRow);
     }
 

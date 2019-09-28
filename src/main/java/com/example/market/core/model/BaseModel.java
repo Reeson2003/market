@@ -15,8 +15,8 @@ public class BaseModel<M extends Model>
     public BaseModel() {
         final Field[] fields = getClass().getDeclaredFields();
         propDefs = Arrays.stream(fields)
-                         .map(field -> new PropDef(field.getName(), getDisplayedName(field)))
-                         .collect(Collectors.toList());
+                .map(field -> new PropDef(field.getName(), getDisplayedName(field)))
+                .collect(Collectors.toList());
     }
 
     private String getDisplayedName(Field field) {
@@ -71,11 +71,11 @@ public class BaseModel<M extends Model>
             } else if (type == long.class) {
                 field.setLong(this, Long.parseLong(value));
             } else if (type == boolean.class) {
-                field.setBoolean(this, Boolean.valueOf(value));
+                field.setBoolean(this, Boolean.parseBoolean(value));
             } else if (type == double.class) {
                 field.setDouble(this, Double.parseDouble(value));
             } else if (type == byte.class) {
-                field.setByte(this, Byte.valueOf(value));
+                field.setByte(this, Byte.parseByte(value));
             } else if (type == char.class) {
                 field.setChar(this, value.charAt(0));
             } else if (type == float.class) {
@@ -96,4 +96,12 @@ public class BaseModel<M extends Model>
         }
     }
 
+    @Override
+    public String toString() {
+        return "Id: " + id + ", " +
+                propDefs.stream()
+                        .map(PropDef::getPropertyName)
+                        .map(propName -> propName + ": " + getPropertyValue(propName))
+                        .collect(Collectors.joining(", "));
+    }
 }
