@@ -33,6 +33,12 @@ public class SwingTableView<M extends Model<M>>
 
     private JTable table;
 
+    private volatile String sortBy = null;
+
+    private volatile String filterName = null;
+
+    private volatile String filterValue = null;
+
     @SuppressWarnings("deprecation")
     @Override
     public void show() {
@@ -43,11 +49,13 @@ public class SwingTableView<M extends Model<M>>
         setLayout(new BorderLayout());
         TableToolbar toolBar = new TableToolbar();
         add(toolBar, BorderLayout.NORTH);
-        Box contents = new Box(BoxLayout.Y_AXIS);
-        add(contents, BorderLayout.CENTER);
-        Object[] propertyNames = Stream.concat(Stream.of("Id"), props.stream()
+        SearchPanel searchPanel = new SearchPanel(propertyNames.toArray(new String[0]));
+        searchPanel.onSort(property -> fillTable(dataSupplier.sortBy(property)));
+        searchPanel.onFilter(filterOptions -> fillTable(dataSupplier.findBy(filterOptions.getProperty(), filterOptions.getValue())));
+        add(searchPanel, BorderLayout.SOUTH);
+        String[] propertyNames = Stream.concat(Stream.of("Id"), props.stream()
                 .map(PropDef::getPropertyDisplayedName))
-                .toArray();
+                .toArray(String[]::new);
         tableModel = new DefaultTableModel(propertyNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -74,6 +82,8 @@ public class SwingTableView<M extends Model<M>>
                     fillTable();
                 })
                 .onRefresh(this::fillTable);
+        Box contents = new Box(BoxLayout.Y_AXIS);
+        add(contents, BorderLayout.CENTER);
         contents.add(new JScrollPane(table));
         fillTable();
     }
